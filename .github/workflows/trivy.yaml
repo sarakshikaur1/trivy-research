@@ -57,11 +57,24 @@ jobs:
             type=gha,mode=max
             type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:buildcache,mode=max
 
+      - name: Extract image tag from metadata
+        id: extract-image-tag
+        shell: bash
+        run: |
+            # Get the full image name with tag and replace in Dockerfile.deploy
+            TAGS="${{ steps.meta.outputs.tags }}"
+            FULL_IMAGE=$(echo "$TAGS" | grep -E ':[A-Za-z0-9._-]+-[0-9a-f]{6,}$' | head -n 1)
+  
+            # Extract just the tag portion
+            TAG_ONLY=$(echo "$FULL_IMAGE" | cut -d':' -f2-)
+            echo "Tag is $TAG_ONLY"
+            echo "image-tag=$TAG_ONLY" >> $GITHUB_OUTPUT
+
       - name: Aqua Security Trivy
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: image
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{github.ref_name}}-${{ github.sha }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.extract-image-tag.outputs.image-tag }}
           scanners: vuln,secret,license
           exit-code: 0
           format: 'sarif'
