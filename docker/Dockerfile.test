@@ -1,5 +1,18 @@
+# FROM python:3.9-slim
+
+# RUN pip install pytest boto3
+
+# CMD [ "tail", "-f", "/dev/null" ]
+
+
 FROM python:3.9-slim
 
-RUN pip install pytest boto3
+WORKDIR /app
 
-CMD [ "tail", "-f", "/dev/null" ]
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app.py .
+
+CMD ["python", "app.py"]

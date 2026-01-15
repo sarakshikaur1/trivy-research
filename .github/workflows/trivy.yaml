@@ -27,6 +27,17 @@ jobs:
         uses: aquasecurity/setup-trivy@v0.2.4
         with:
           cache: true
+      - name: Trivy scan for Python dependencies
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          scan-type: fs
+          scan-ref: docker
+          format: table
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+          output: 'trivy-dependencies.txt'
+          # skip-setup-trivy: true
+          exit-code: 0
 
       - name: Docker Login
         uses: docker/login-action@v3.6.0
