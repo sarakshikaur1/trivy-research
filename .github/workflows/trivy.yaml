@@ -27,8 +27,8 @@ jobs:
         uses: aquasecurity/setup-trivy@v0.2.4
         with:
           cache: true
-      - name: Trivy scan for Python dependencies
-        uses: aquasecurity/trivy-action@0.20.0
+      - name: Trivy Python dependencies scan
+        uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: fs
           scan-ref: docker
@@ -36,7 +36,7 @@ jobs:
           ignore-unfixed: true
           severity: HIGH,CRITICAL
           output: 'trivy-dependencies.txt'
-          # skip-setup-trivy: true
+          skip-setup-trivy: true
           exit-code: 0
 
       - name: Docker Login
@@ -58,6 +58,7 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v6.18.0
         with:
+          context: docker
           file: docker/Dockerfile.test
           push: true
           tags: ${{ steps.meta.outputs.tags }}
