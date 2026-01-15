@@ -98,7 +98,9 @@ jobs:
         uses: actions/upload-artifact@v6.0.0
         with:
           name: trivy-result-${{ steps.extract-image-tag.outputs.image-tag }}
-          path: trivy-results.txt
+          path: |
+            trivy-results.txt
+            trivy-dependencies.txt
 
       # - name: Upload Trivy scan results to GitHub Security tab
       #   uses: github/codeql-action/upload-sarif@v4
