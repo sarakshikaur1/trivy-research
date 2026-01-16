@@ -35,11 +35,11 @@ jobs:
         with:
           scan-type: fs
           scan-ref: docker
-          format: table
+          format: json
           scanners: vuln,secret,license
           ignore-unfixed: true
           severity: HIGH,CRITICAL
-          output: 'trivy-dependencies.txt'
+          output: 'trivy-dependencies.json'
           skip-setup-trivy: true
           exit-code: 0
 
