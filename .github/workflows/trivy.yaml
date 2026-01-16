@@ -27,10 +27,30 @@ jobs:
         uses: aquasecurity/setup-trivy@v0.2.4
         with:
           cache: true
-      - name: Install Node dependencies
-        working-directory: docker
-        run: npm ci --production
-      - name: Trivy dependencies scan
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.0.x'
+      - name: Restore .NET dependencies
+        run: dotnet restore docker/SampleDotNetApp/SampleDotNetApp.csproj
+
+      # - name: Install Node dependencies
+      #   working-directory: docker
+      #   run: npm ci --production
+
+      - name: Trivy dependencies scan - output table txt
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          scan-type: fs
+          scan-ref: docker
+          format: table
+          scanners: vuln,secret,license
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+          output: 'trivy-dependencies.txt'
+          skip-setup-trivy: true
+          exit-code: 0
+      - name: Trivy dependencies scan - output json
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: fs
@@ -105,6 +125,7 @@ jobs:
           path: |
             trivy-results.txt
             trivy-dependencies.json
+            trivy-dependencies.txt
 
       # - name: Upload Trivy scan results to GitHub Security tab
       #   uses: github/codeql-action/upload-sarif@v4
