@@ -27,7 +27,10 @@ jobs:
         uses: aquasecurity/setup-trivy@v0.2.4
         with:
           cache: true
-      - name: Trivy Python dependencies scan
+      - name: Install Node dependencies
+        working-directory: docker
+        run: npm ci --production
+      - name: Trivy dependencies scan
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: fs
