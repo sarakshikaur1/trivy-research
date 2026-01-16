@@ -33,6 +33,7 @@ jobs:
           scan-type: fs
           scan-ref: docker
           format: table
+          scanners: vuln,secret,license
           ignore-unfixed: true
           severity: HIGH,CRITICAL
           output: 'trivy-dependencies.txt'
