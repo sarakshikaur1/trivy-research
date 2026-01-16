@@ -1,0 +1,15 @@
+{
+  "name": "trivy-node-demo",
+  "version": "1.0.0",
+  "description": "Minimal Node.js app for Trivy scanning demo",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "demo",
+  "license": "MIT",
+  "dependencies": {
+    "express": "4.18.2",
+    "lodash": "4.17.21"
+  }
+}
