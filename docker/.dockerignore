@@ -1,2 +1,21 @@
 node_modules
 npm-debug.log
+
+# Git
+.git
+.gitignore
+
+# .NET build output
+**/bin/
+**/obj/
+
+# User & OS junk
+**/*.user
+**/*.suo
+**/*.log
+.DS_Store
+Thumbs.db
+
+# Node / Python (future proof)
+node_modules
+__pycache__
