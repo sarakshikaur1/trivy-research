@@ -114,8 +114,8 @@ jobs:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.extract-image-tag.outputs.image-tag }}
           scanners: vuln,secret,license
           exit-code: 0
-          format: 'table'
-          output: 'trivy-results.txt'
+          format: 'json'
+          output: 'trivy-results.json'
           skip-setup-trivy: true
 
       - name: Upload a Build Artifact
@@ -123,7 +123,7 @@ jobs:
         with:
           name: trivy-result-${{ steps.extract-image-tag.outputs.image-tag }}
           path: |
-            trivy-results.txt
+            trivy-results.json
             trivy-dependencies.json
             trivy-dependencies.txt
 
