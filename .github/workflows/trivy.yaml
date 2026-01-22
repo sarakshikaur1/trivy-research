@@ -3,7 +3,7 @@ name: Trivy Scan
 on:
   push:
     branches:
-      - main
+      - sample-dotnet
     
 jobs:
   trivy-scan:
@@ -33,24 +33,7 @@ jobs:
           dotnet-version: '7.0.x'
       - name: Restore .NET dependencies
         run: dotnet restore docker/SampleDotNetApp/SampleDotNetApp.csproj
-
-      # - name: Install Node dependencies
-      #   working-directory: docker
-      #   run: npm ci --production
-
-      - name: Trivy dependencies scan - output table txt
-        uses: aquasecurity/trivy-action@0.33.1
-        with:
-          scan-type: fs
-          scan-ref: docker
-          format: table
-          scanners: vuln,secret,license
-          ignore-unfixed: true
-          severity: HIGH,CRITICAL
-          output: 'trivy-dependencies.txt'
-          skip-setup-trivy: true
-          exit-code: 0
-      - name: Trivy dependencies scan - output json
+      - name: Trivy fs scan
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: fs
@@ -59,7 +42,7 @@ jobs:
           scanners: vuln,secret,license
           ignore-unfixed: true
           severity: HIGH,CRITICAL
-          output: 'trivy-dependencies.json'
+          output: 'trivy-sampleDotnet-fs.json'
           skip-setup-trivy: true
           exit-code: 0
 
@@ -83,7 +66,7 @@ jobs:
         uses: docker/build-push-action@v6.18.0
         with:
           context: docker
-          file: docker/Dockerfile.test
+          file: docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -107,7 +90,7 @@ jobs:
             echo "Tag is $TAG_ONLY"
             echo "image-tag=$TAG_ONLY" >> $GITHUB_OUTPUT
 
-      - name: Aqua Security Trivy
+      - name: Trivy image scan
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: image
@@ -115,7 +98,7 @@ jobs:
           scanners: vuln,secret,license
           exit-code: 0
           format: 'json'
-          output: 'trivy-results.json'
+          output: 'trivy-sampleDotnet-image.json'
           skip-setup-trivy: true
 
       - name: Upload a Build Artifact
@@ -123,14 +106,6 @@ jobs:
         with:
           name: trivy-result-${{ steps.extract-image-tag.outputs.image-tag }}
           path: |
-            trivy-results.json
-            trivy-dependencies.json
-            trivy-dependencies.txt
-
-      # - name: Upload Trivy scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v4
-      #   with:
-      #     sarif_file: 'trivy-results.sarif'
-
-      
+            trivy-sampleDotnet-fs.json
+            trivy-sampleDotnet-image.json
           
